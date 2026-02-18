@@ -1,7 +1,8 @@
 import 'colors';
 import * as readlineSync from 'readline-sync';
 import { AppDataSource } from '../config/data-source';
-// import { UserSeeder } from './seeders/user.seeder';
+import { UserSeeder } from './seeders/use.seeder';
+
 
 
 
@@ -29,7 +30,7 @@ async function seed() {
     await AppDataSource.synchronize(true); 
     console.log("\nSeeding tables…".green);
 
-    // await UserSeeder.seed(); 
+    await UserSeeder.seed(); 
 
 
     console.log("\nSeed completed successfully.".green);

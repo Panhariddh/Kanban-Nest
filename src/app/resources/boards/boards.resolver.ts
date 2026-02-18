@@ -1,7 +1,10 @@
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { Board } from "src/app/database/models/boards/board.model";
 import { BoardsService } from "./boards.service";
+import { UseGuards } from "@nestjs/common";
+import { GqlAuthGuard } from "src/app/common/guards/gql-auth.guard";
 
+@UseGuards(GqlAuthGuard)
 @Resolver(() => Board)
 export class BoardsResolver {
   constructor(private boardsService: BoardsService) {}

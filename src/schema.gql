@@ -4,6 +4,7 @@
 
 type UserModel {
   id: ID!
+  name: String!
   email: String!
 }
 

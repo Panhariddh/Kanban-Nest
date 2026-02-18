@@ -12,6 +12,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModel } from './app/database/models/user.model';
 import { Board } from './app/database/models/boards/board.model';
 import { Task } from './app/database/models/tasks/task.model';
+import { AuthModule } from './app/resources/auth/auth.module';
 
 
 @Module({
@@ -19,10 +20,11 @@ import { Task } from './app/database/models/tasks/task.model';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      context: ({ req, res }) => ({ req, res }),
     }),
 
     TypeOrmModule.forFeature([UserModel, Board, Task]),
-
+    AuthModule,
     ConfigModule,
     UsersModule,
     BoardsModule,
