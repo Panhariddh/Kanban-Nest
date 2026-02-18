@@ -1,0 +1,41 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type UserModel {
+  id: ID!
+  email: String!
+}
+
+type Task {
+  id: ID!
+  title: String!
+  description: String
+  status: TaskStatus!
+  board: Board!
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+type Board {
+  id: ID!
+  title: String!
+  owner: UserModel!
+  tasks: [Task!]
+}
+
+type Query {
+  hello: String!
+  boards: [Board!]!
+}
+
+type Mutation {
+  createBoard(title: String!): Board!
+  createTask(title: String!, boardId: Float!): Task!
+  moveTask(taskId: Float!, status: TaskStatus!): Boolean!
+  deleteTask(id: Float!): Boolean!
+}
