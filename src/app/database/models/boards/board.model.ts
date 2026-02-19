@@ -15,9 +15,10 @@ export class Board {
   @Column()
   title: string;
 
-  @ManyToOne(() => UserModel, user => user.boards)
+  @ManyToOne(() => UserModel, user => user.boards, { onDelete: 'CASCADE' })
   @Field(() => UserModel)
   owner: UserModel;
+
 
   @OneToMany(() => Task, task => task.board)
   @Field(() => [Task], { nullable: true })

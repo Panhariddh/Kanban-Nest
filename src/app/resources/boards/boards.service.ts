@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Board } from "src/app/database/models/boards/board.model";
+import { UserModel } from "src/app/database/models/user.model";
 import { Repository } from "typeorm";
 
 @Injectable()
@@ -10,16 +11,36 @@ export class BoardsService {
     private repo: Repository<Board>,
   ) {}
 
-  findAll() {
-    return this.repo.find({ relations: ['tasks', 'owner'] });
+  async findAllByUser(userId: number) {
+    return this.repo.find({
+      where: {
+        owner: { id: userId },
+      },
+      relations: ['tasks'],
+    });
   }
 
-  create(title: string) {
-    const board = this.repo.create({ title });
+  async create(title: string, user: UserModel) {
+    const board = this.repo.create({
+      title,
+      owner: user,
+    });
+
     return this.repo.save(board);
   }
 
-  remove(id: number) {
-    return this.repo.delete(id);
+  async remove(id: number, userId: number) {
+    const board = await this.repo.findOne({
+      where: { id },
+      relations: ['owner'],
+    });
+
+    if (!board || board.owner.id !== userId) {
+      throw new Error('Unauthorized');
+    }
+
+    await this.repo.delete(id);
+    return true;
   }
+
 }

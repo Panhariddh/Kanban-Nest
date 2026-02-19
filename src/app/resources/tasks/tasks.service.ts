@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { TaskStatus } from "src/app/common/enum/taskStatus.enum";
 import { Board } from "src/app/database/models/boards/board.model";
@@ -14,11 +14,18 @@ export class TasksService {
     private boardRepo: Repository<Board>,
   ) {}
 
-  async create(title: string, boardId: number) {
-    const board = await this.boardRepo.findOneBy({ id: boardId });
+  async create(title: string, boardId: number, userId: number) {
+    const board = await this.boardRepo.findOne({
+      where: { id: boardId },
+      relations: ['owner'],
+    });
 
     if (!board) {
       throw new Error("Board not found");
+    }
+
+    if (board.owner.id !== userId) {
+      throw new UnauthorizedException("Not your board");
     }
 
     const task = this.repo.create({
@@ -29,11 +36,38 @@ export class TasksService {
     return this.repo.save(task);
   }
 
-  updateStatus(id: number, status: TaskStatus) {
-    return this.repo.update(id, { status });
+  async updateStatus(id: number, status: TaskStatus, userId: number) {
+    const task = await this.repo.findOne({
+      where: { id },
+      relations: ['board', 'board.owner'],
+    });
+
+    if (!task) {
+      throw new Error("Task not found");
+    }
+
+    if (task.board.owner.id !== userId) {
+      throw new UnauthorizedException("Not your task");
+    }
+
+    task.status = status;
+    await this.repo.save(task);
   }
 
-  remove(id: number) {
-    return this.repo.delete(id);
+  async remove(id: number, userId: number) {
+    const task = await this.repo.findOne({
+      where: { id },
+      relations: ['board', 'board.owner'],
+    });
+
+    if (!task) {
+      throw new Error("Task not found");
+    }
+
+    if (task.board.owner.id !== userId) {
+      throw new UnauthorizedException("Not your task");
+    }
+
+    await this.repo.delete(id);
   }
 }

@@ -30,12 +30,12 @@ type Board {
 }
 
 type Query {
-  hello: String!
   boards: [Board!]!
 }
 
 type Mutation {
   createBoard(title: String!): Board!
+  deleteBoard(id: Float!): Boolean!
   createTask(title: String!, boardId: Float!): Task!
   moveTask(taskId: Float!, status: TaskStatus!): Boolean!
   deleteTask(id: Float!): Boolean!
