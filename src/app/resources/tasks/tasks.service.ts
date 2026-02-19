@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { TaskStatus } from "src/app/common/enum/taskStatus.enum";
+import { pubSub } from "src/app/common/pubsub";
 import { Board } from "src/app/database/models/boards/board.model";
 import { Task } from "src/app/database/models/tasks/task.model";
 import { Repository } from "typeorm";
@@ -33,7 +34,15 @@ export class TasksService {
       board,
     });
 
-    return this.repo.save(task);
+    const savedTask = await this.repo.save(task);
+
+    await pubSub.publish('taskUpdated', {
+      taskUpdated: savedTask,
+      boardId: boardId,
+    });
+
+    return savedTask;
+    
   }
 
   async updateStatus(id: number, status: TaskStatus, userId: number) {
@@ -51,7 +60,13 @@ export class TasksService {
     }
 
     task.status = status;
-    await this.repo.save(task);
+    
+    const updatedTask = await this.repo.save(task);
+
+    await pubSub.publish('taskUpdated', {
+      taskUpdated: updatedTask,
+      boardId: task.board.id,
+    });
   }
 
   async remove(id: number, userId: number) {
@@ -68,6 +83,13 @@ export class TasksService {
       throw new UnauthorizedException("Not your task");
     }
 
+    const boardId = task.board.id;
+
     await this.repo.delete(id);
+
+    await pubSub.publish('taskUpdated', {
+      taskUpdated: task,
+      boardId: boardId,
+    });
   }
 }

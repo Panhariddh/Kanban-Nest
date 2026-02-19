@@ -40,3 +40,7 @@ type Mutation {
   moveTask(taskId: Float!, status: TaskStatus!): Boolean!
   deleteTask(id: Float!): Boolean!
 }
+
+type Subscription {
+  taskUpdated(boardId: Float!): Task!
+}
