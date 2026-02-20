@@ -34,6 +34,17 @@ export class TasksResolver {
   }
 
   @UseGuards(GqlAuthGuard)
+  @Mutation(() => Task)
+  updateTask(
+    @Args('id') id: number,
+    @Args('title', { nullable: true }) title: string,
+    @Args('description', { nullable: true }) description: string,
+    @CurrentUser() user: UserModel,
+  ) {
+    return this.tasksService.update(id, title, description, user.id);
+  }
+
+  @UseGuards(GqlAuthGuard)
   @Mutation(() => Boolean)
   async deleteTask(
     @Args('id') id: number,

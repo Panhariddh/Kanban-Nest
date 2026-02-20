@@ -39,6 +39,7 @@ type Mutation {
   deleteBoard(id: Float!): Boolean!
   createTask(title: String!, boardId: Float!): Task!
   moveTask(taskId: Float!, status: TaskStatus!): Boolean!
+  updateTask(id: Float!, title: String, description: String): Task!
   deleteTask(id: Float!): Boolean!
 }
 

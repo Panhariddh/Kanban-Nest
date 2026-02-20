@@ -92,4 +92,33 @@ export class TasksService {
       boardId: boardId,
     });
   }
+
+  async update(
+    id: number,
+    title: string,
+    description: string,
+    userId: number,
+  ) {
+    const task = await this.repo.findOne({
+      where: { id },
+      relations: ['board', 'board.owner'],
+    });
+
+    if (!task) throw new Error("Task not found");
+    if (task.board.owner.id !== userId) {
+      throw new UnauthorizedException("Not your task");
+    }
+
+    if (title !== undefined) task.title = title;
+    if (description !== undefined) task.description = description;
+
+    const updatedTask = await this.repo.save(task);
+
+    await pubSub.publish('taskUpdated', {
+      taskUpdated: updatedTask,
+      boardId: task.board.id,
+    });
+
+    return updatedTask;
+  }
 }
