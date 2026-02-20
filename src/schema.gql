@@ -35,6 +35,7 @@ type Query {
 
 type Mutation {
   createBoard(title: String!): Board!
+  updateBoard(id: Float!, title: String!): Board!
   deleteBoard(id: Float!): Boolean!
   createTask(title: String!, boardId: Float!): Task!
   moveTask(taskId: Float!, status: TaskStatus!): Boolean!

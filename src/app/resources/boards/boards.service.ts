@@ -29,6 +29,21 @@ export class BoardsService {
     return this.repo.save(board);
   }
 
+  async update(id: number, title: string, userId: number) {
+    const board = await this.repo.findOne({
+      where: { id },
+      relations: ['owner'],
+    });
+
+    if (!board || board.owner.id !== userId) {
+      throw new Error('Unauthorized');
+    }
+
+    board.title = title;
+
+    return this.repo.save(board);
+  }
+
   async remove(id: number, userId: number) {
     const board = await this.repo.findOne({
       where: { id },

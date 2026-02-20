@@ -24,6 +24,15 @@ export class BoardsResolver {
     return this.boardsService.create(title, user);
   }
 
+  @Mutation(() => Board)
+  updateBoard(
+    @Args('id') id: number,
+    @Args('title') title: string,
+    @CurrentUser() user: UserModel,
+  ) {
+    return this.boardsService.update(id, title, user.id);
+  }
+
   @Mutation(() => Boolean)
   deleteBoard(
     @Args('id') id: number,
