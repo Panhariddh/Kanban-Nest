@@ -2,12 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type UserModel {
-  id: ID!
-  name: String!
-  email: String!
-}
-
 type Task {
   id: ID!
   title: String!
@@ -29,7 +23,15 @@ type Board {
   tasks: [Task!]
 }
 
+type UserModel {
+  id: ID!
+  name: String!
+  email: String!
+  avatar: String
+}
+
 type Query {
+  me: UserModel!
   boards: [Board!]!
 }
 

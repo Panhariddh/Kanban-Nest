@@ -22,6 +22,10 @@ export class UserModel {
   @Column()
   password: string;
 
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  avatar?: string;
+
   @Column({
     type: 'enum',
     enum: UserRole,
